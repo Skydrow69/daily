@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-daily',
   templateUrl: './daily.component.html',
   styleUrls: ['./daily.component.scss']
 })
-export class DailyComponent implements OnInit {
+export class DailyComponent implements OnInit, OnDestroy {
   seconds: number =0;
   minutes: number =0;
   timer: any;
@@ -22,43 +22,31 @@ export class DailyComponent implements OnInit {
   ngOnInit() {
 
   }
-  
-  // draw(){
-  //   this.index = Math.floor(Math.random() * this.users.length);
-  //   if(this.usersChosen.includes(this.users[this.index])){
-  //     console.log('utilisateur déjà choisi');
-  //     if(this.usersChosen.length === this.users.length){
-  //       this.stopTimer();  
-  //       this.usersChosen = [];
-  //       return;
-  //     }
-  //     this.draw();
-  //     return;
-  //   }
-  //   this.usersChosen.push(this.users[this.index]);
-  //   this.username = this.users[this.index];
-  //   console.log('utilisateur choisi', this.usersChosen);
-  // }
-  draw() {
-    console.log(this.stateDaily);
-    this.index = Math.floor(Math.random() * this.users.length);
+
+  startRandomizingUser(timeInterval: number) { 
     this.stateDaily = 'process';
-    if (this.usersChosen.includes(this.users[this.index])) {
-      console.log('Utilisateur déjà choisi');
-      if (this.usersChosen.length === this.users.length) {
+    this.randomizer(this.users);
+    this.timer = setInterval(() => {
+      const remainingUsers = this.users.filter(user => !this.usersChosen.includes(user));
+      console.log('REMAINING USERS: ', remainingUsers);
+      if (remainingUsers.length > 0) {
+       this.randomizer(remainingUsers);
+      } else {
         this.stopTimer();
-        this.usersChosen = [];
-        return;
-      }
-      this.draw();
-      return;
-    }
-    this.usersChosen.push(this.users[this.index]);
-    this.username = this.users[this.index];
-    console.log('Utilisateur choisi', this.usersChosen);
+      }   
+    }, timeInterval);
+  }
+
+  randomizer(remainingUsers: Array<string>) {
+
+    const randomIndex = Math.floor(Math.random() * remainingUsers.length);
+    console.log(remainingUsers);
+        this.username = remainingUsers[randomIndex];
+        this.usersChosen.push(this.username);
+        console.log('username: ', this.username);
+    
   }
   
-
   formatTimer(time: number): any {
     if(time < 10){
       return '0' + time;
@@ -66,12 +54,14 @@ export class DailyComponent implements OnInit {
     return time;
   }
 
-  startTimer(){
+  startTimer() {
+    
     if(this.stateDaily === 'init'){
       this.seconds = 1;
     }
-    this.draw();
-    this.setIntervalDraw();
+    this.startRandomizingUser(5000);
+    // this.draw();
+    // this.setIntervalDraw();
     this.timer = setInterval(() => {
       this.seconds++;
   
@@ -82,32 +72,6 @@ export class DailyComponent implements OnInit {
     }, 1000);
   }
 
-    // }
-  // startTimer() {
-  //   if (this.startUserIndex === -1) {
-  //     const remainingUsers = this.users.filter((user, index) => !this.usersChosen.includes(user));
-  //     this.startUserIndex = Math.floor(Math.random() * remainingUsers.length);
-  //     const startIndex = this.users.indexOf(remainingUsers[this.startUserIndex]);
-  //     this.startUserIndex = startIndex;
-  //     this.usersChosen.push(remainingUsers[this.startUserIndex]);
-  //   } else {
-  //     this.startUserIndex++;
-  //     if (this.startUserIndex >= this.users.length) {
-  //       this.startUserIndex = 0;
-  //     }
-  //   }
-  
-  
-  
-  
-  setIntervalDraw(){
-    
-    this.timerInterval = setInterval(() => {
-      this.draw();
-      console.log('change user');
-    }, 5000);
-    
-  }
   stopTimer(){
     clearInterval(this.timer);
     clearInterval(this.timerInterval);
@@ -118,4 +82,38 @@ export class DailyComponent implements OnInit {
     this.minutes =0;
     this.seconds =0;
   }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    
+  }
+
+    // draw() {
+  //   console.log(this.stateDaily);
+  //   this.index = Math.floor(Math.random() * this.users.length);
+  //   this.stateDaily = 'process';
+  //   if (this.usersChosen.includes(this.users[this.index])) {
+  //     console.log('Utilisateur déjà choisi');
+  //     if (this.usersChosen.length === this.users.length) {
+  //       this.stopTimer();
+  //       this.usersChosen = [];
+  //       return;
+  //     }
+  //     this.draw();
+  //     return;
+  //   }
+  //   this.usersChosen.push(this.users[this.index]);
+  //   this.username = this.users[this.index];
+  //   console.log('Utilisateur choisi', this.usersChosen);
+  // }
+
+    // setIntervalDraw(){
+
+  //   this.timerInterval = setInterval(() => {
+  //     // this.draw();
+  //     console.log('change user');
+  //   }, 5000);
+  // }
+  
 }
