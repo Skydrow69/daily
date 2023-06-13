@@ -86,34 +86,6 @@ export class DailyComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    
+    this.stopTimer();
   }
-
-    // draw() {
-  //   console.log(this.stateDaily);
-  //   this.index = Math.floor(Math.random() * this.users.length);
-  //   this.stateDaily = 'process';
-  //   if (this.usersChosen.includes(this.users[this.index])) {
-  //     console.log('Utilisateur déjà choisi');
-  //     if (this.usersChosen.length === this.users.length) {
-  //       this.stopTimer();
-  //       this.usersChosen = [];
-  //       return;
-  //     }
-  //     this.draw();
-  //     return;
-  //   }
-  //   this.usersChosen.push(this.users[this.index]);
-  //   this.username = this.users[this.index];
-  //   console.log('Utilisateur choisi', this.usersChosen);
-  // }
-
-    // setIntervalDraw(){
-
-  //   this.timerInterval = setInterval(() => {
-  //     // this.draw();
-  //     console.log('change user');
-  //   }, 5000);
-  // }
-  
 }
