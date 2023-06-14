@@ -1,4 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Folders } from '../models/folders.model';
+import { FoldersService } from '../folders.service';
 
 @Component({
   selector: 'app-daily',
@@ -16,11 +19,25 @@ export class DailyComponent implements OnInit, OnDestroy {
   users: Array<string> = ['user1', 'user2', 'user3'];
   index!: number ;
   startUserIndex: number = -1;
-  stateDaily: string = 'init'
+  stateDaily: string = 'init';
+  folder?: Folders;
 
+  constructor(private route: ActivatedRoute,
+              private foldersService: FoldersService){}
   
   ngOnInit() {
 
+    this.route.params.subscribe((params)=> {
+      console.log('route param', params['id']);
+      this.folder = this.foldersService.getFolder(params['id']);
+    })
+
+  }
+
+
+
+  addUser(){
+    this.users.push(this.username);
   }
 
   startRandomizingUser(timeInterval: number) { 

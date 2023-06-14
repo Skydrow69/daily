@@ -6,6 +6,7 @@ import { DailyComponent } from './daily/daily.component';
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'daily', component: DailyComponent},
+  {path:'daily/:id', component: DailyComponent}
 ];
 
 @NgModule({

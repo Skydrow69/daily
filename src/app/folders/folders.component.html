@@ -12,13 +12,14 @@
         <div class="mb-3 mt-3">
           <input name ="newLabel" type="text" class="form-control" placeholder="Nommer votre projet" [(ngModel)]="newLabel">
           <p>{{ newLabel }}</p>
+          <p *ngIf="existingLabelError">Le nom existe déjà</p>
           <button class="btn btn-primary mt-2" type="submit">Créer</button>
           <button class="btn btn-danger mt-2 ms-2" type="button">Annuler</button>
         </div>
       </form>
     </div>
-    <div class="col-1" *ngFor="let folder of folders; ">
-      <a routerLink="/daily">
+    <div class="col-1" *ngFor="let folder of folders; let i = index">
+      <a [routerLink]="['/daily', i]">
       <h5 class="card-title text-center">
         <i class="fas fa-folder fa-2x" style="color: #0b82f9"></i>
         <p> {{ folder.label }}</p>
