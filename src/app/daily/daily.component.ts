@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Folders } from '../models/folders.model';
 import { FoldersService } from '../folders.service';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-daily',
@@ -21,6 +22,9 @@ export class DailyComponent implements OnInit, OnDestroy {
   startUserIndex: number = -1;
   stateDaily: string = 'init';
   folder?: Folders;
+  addUsersForm!: FormGroup;
+  usernameError?: string;
+
 
   constructor(private route: ActivatedRoute,
               private foldersService: FoldersService){}
@@ -30,14 +34,35 @@ export class DailyComponent implements OnInit, OnDestroy {
     this.route.params.subscribe((params)=> {
       console.log('route param', params['id']);
       this.folder = this.foldersService.getFolder(params['id']);
-    })
+    });
+
+    this.addUsersForm = new FormGroup({
+      username: new FormControl(),
+    });
 
   }
 
 
 
   addUser(){
-    this.users.push(this.username);
+      if(this.users.includes(this.addUsersForm.value.username)){
+        console.log(this.addUsersForm.value.username)
+        this.usernameError = 'Le nom existe déjà';
+      }else{
+        this.users.push(this.addUsersForm.value.username);
+        console.log('USERS ADDED', this.users);
+        this.usernameError = '';
+      }
+
+    //   for(let i = 0; i < this.users.length; i++){
+    //     if(this.users[i] === this.addUsersForm.value.username){
+    //       this.usernameError = 'Le nom existe déjà';
+    //       return;
+    //     }
+    // }
+    // this.users.push(this.addUsersForm.value.username);
+    // console.log('USERS ADDED', this.users);
+    // this.usernameError = '';
   }
 
   startRandomizingUser(timeInterval: number) { 

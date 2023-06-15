@@ -1,11 +1,19 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <button>Add a user</button>
-            <form action="">
+            <form [formGroup]="addUsersForm" (ngSubmit)="addUser()">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Ajouter un nom d'utilisateur</label>
+                    <input type="text" class="form-control" id="username" formControlName="username">
+                     <div *ngIf="usernameError" class="form-text"><p>{{ usernameError }}</p></div> 
+                </div>
+                <button type="submit" class="btn btn-primary">Add a user</button>
+            </form>
+           
+            <!-- <form action="">
                 <input type="text">
                 <button>Add</button>
-            </form>
+            </form> -->
         </div>
         <div class="col-md-3">
             <a routerLink="">retour</a>
