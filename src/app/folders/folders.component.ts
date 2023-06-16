@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Folders } from '../models/folders.model';
 import { FoldersService } from '../folders.service';
 
@@ -7,7 +7,7 @@ import { FoldersService } from '../folders.service';
   templateUrl: './folders.component.html',
   styleUrls: ['./folders.component.scss']
 })
-export class FoldersComponent implements OnInit {
+export class FoldersComponent implements OnInit, OnDestroy {
 
   show: boolean = false;
 
@@ -45,6 +45,11 @@ export class FoldersComponent implements OnInit {
         this.existingLabelError = '';
       }
        // Ajouter le nouvel objet au tableau "folders"
+    }
+
+    ngOnDestroy() {
+      //Called once, before the instance is destroyed.
+      //Add 'implements OnDestroy' to the class.
     }
 
 }

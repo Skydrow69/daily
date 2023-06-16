@@ -1,40 +1,47 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
-            <form [formGroup]="addUsersForm" (ngSubmit)="addUser()">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Ajouter un nom d'utilisateur</label>
-                    <input type="text" class="form-control" id="username" formControlName="username">
-                     <div *ngIf="usernameError" class="form-text"><p>{{ usernameError }}</p></div> 
-                </div>
-                <button type="submit" class="btn btn-primary">Add a user</button>
-            </form>
-           
-            <!-- <form action="">
-                <input type="text">
-                <button>Add</button>
-            </form> -->
-        </div>
-        <div class="col-md-3">
-            <a routerLink="">retour</a>
+        <div class="col-md-3 my-5">
+            <button routerLink="" class="btn btn-primary">
+                retour
+            </button>
         </div>
     </div>
     <div class="row">
-        <h1 class="text-center">
-            {{folder?.label}}
-        </h1>
-        <div class="col-md-6 " class="d-flex align-items-center justify-content-center text-center">
-            <p *ngIf="stateDaily === 'init'">début du daily</p>
-            <p *ngIf="stateDaily === 'process' ">{{ username }} est le suivant</p>
-            <p *ngIf="stateDaily === 'end' "> daily est fini</p>
+        <div class="col-8">
+            <h1 class="text-center">
+                {{folder?.label}}
+            </h1>
+            <div class="d-flex align-items-center justify-content-center text-center">
+                <p *ngIf="stateDaily === 'init'">début du daily</p>
+                <p *ngIf="stateDaily === 'process' ">{{ username }} est le suivant</p>
+                <p *ngIf="stateDaily === 'end' "> daily est fini</p>
+            </div>
+          
+            <div class="d-flex align-items-center justify-content-center text-center" style="height: 500px;">
+                <button (click)="startTimer()" class="btn btn-success" style="margin-right:30px">start</button>
+                <button (click)="stopTimer()"class="btn btn-danger" style="margin-right:30px">stop</button>
+                <button (click)="resetTimer()"class="btn btn-primary" style="margin-right:30px">resetTimer</button>
+                <p> {{formatTimer(minutes)}} : {{formatTimer(seconds)}}</p>  
+            </div>
         </div>
-      
-        <div class="col-md-6" class="d-flex align-items-center justify-content-center text-center" style="height: 800px;">
-        
-            <button (click)="startTimer()" class="btn btn-success" style="margin-right:30px">start</button>
-            <button (click)="stopTimer()"class="btn btn-danger" style="margin-right:30px">stop</button>
-            <button (click)="resetTimer()"class="btn btn-primary" style="margin-right:30px">resetTimer</button>
-            <p> {{formatTimer(minutes)}} : {{formatTimer(seconds)}}</p>  
+
+        <div class="col-4">
+            
+            <h3>Liste d'utilisateurs</h3>
+            <div class="my-3">
+                <form [formGroup]="addUsersForm" (ngSubmit)="addUser()">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Ajouter un nom d'utilisateur</label>
+                        <input type="text" class="form-control" id="username" formControlName="username">
+                         <div *ngIf="usernameError" class="form-text"><p>{{ usernameError }}</p></div> 
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add a user</button>
+                </form>
+            </div>
+            <ul class="list-group">
+                <li *ngFor="let user of usersList" class="list-group-item">{{user.name}}</li>
+            </ul>
         </div>
+
     </div>
 </div>

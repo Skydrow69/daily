@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Folders } from '../models/folders.model';
 import { FoldersService } from '../folders.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { UsersService } from '../users.service';
+import { UsersModel } from '../models/users.model';
 
 @Component({
   selector: 'app-daily',
@@ -24,16 +26,29 @@ export class DailyComponent implements OnInit, OnDestroy {
   folder?: Folders;
   addUsersForm!: FormGroup;
   usernameError?: string;
+  newUser = {
+    name: '',
+    project: []
+  };
+  usersList!: UsersModel[];
+  idProject!: number;
+
+
+
 
 
   constructor(private route: ActivatedRoute,
-              private foldersService: FoldersService){}
+              private foldersService: FoldersService,
+              private userService : UsersService){
+              }
   
   ngOnInit() {
-
+  
     this.route.params.subscribe((params)=> {
       console.log('route param', params['id']);
-      this.folder = this.foldersService.getFolder(params['id']);
+      this.idProject = +params['id'];
+      this.usersList = this.userService.getUsersProject(this.idProject);
+      this.folder = this.foldersService.getFolder(this.idProject);
     });
 
     this.addUsersForm = new FormGroup({
@@ -45,15 +60,19 @@ export class DailyComponent implements OnInit, OnDestroy {
 
 
   addUser(){
-      if(this.users.includes(this.addUsersForm.value.username)){
+
+       const newUsername = this.addUsersForm.value.username;
+      const newUser = new UsersModel(newUsername, [this.idProject]);
+      console.log('UTILISATEUR EXISTANT', this.userService.isExistingUser(newUser));
+      if(this.userService.isExistingUser(newUser)){
         console.log(this.addUsersForm.value.username)
-        this.usernameError = 'Le nom existe déjà';
+        this.usernameError = `${newUsername} existe déjà`;
       }else{
-        this.users.push(this.addUsersForm.value.username);
-        console.log('USERS ADDED', this.users);
+        this.usersList = this.userService.addUserProject(this.idProject, newUser);
+        console.log('USERS ADDED', this.userService.users);
         this.usernameError = '';
       }
-
+      this.addUsersForm.reset();
     //   for(let i = 0; i < this.users.length; i++){
     //     if(this.users[i] === this.addUsersForm.value.username){
     //       this.usernameError = 'Le nom existe déjà';
@@ -129,5 +148,7 @@ export class DailyComponent implements OnInit, OnDestroy {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
     this.stopTimer();
+    console.log('STOOOP', this.stopTimer);
+
   }
 }
