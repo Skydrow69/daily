@@ -1,4 +1,9 @@
 import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Folders } from './models/folders.model';
+import { Observable } from 'rxjs';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +22,18 @@ export class FoldersService {
     },
   ];
 
-  constructor() { }
+  constructor(private firestore: AngularFirestore) {}
 
+  addFolder(folder: Folders) {
+    return this.firestore.collection('projects').add(folder);
+  }
+
+  getFoldersFirestore():Observable<any> {
+    return this.firestore.collection('projects').snapshotChanges();
+  }
 
   getFolders(){
+    // return this.firestore.collection('projects').snapshotChanges();
     return this.folders.slice();
   }
 

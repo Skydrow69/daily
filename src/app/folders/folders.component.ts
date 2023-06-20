@@ -21,17 +21,21 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
   
 
-
   folders: Folders[] = [];
-//to do : AJOUTER UN MESSAGE D'ERREUR SI LE NOM DU NOUVEAU DOSSIER EXISTE DEJA DANS LE TABLEAU DES DOSSIER
 
   ngOnInit() {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
     this.folders = this.foldersService.getFolders();
+    this.foldersService.getFoldersFirestore().subscribe((projects) => {
+      this.folders = projects.map((e: any) => {
+        return {
+          id: e.payload.doc.id,
+          ...e.payload.doc.data(),
+        };
+      });
+    });
   }
     addFolder() {
-      
+
       const existingLabel = this.folders.some(folder => folder.label === this.newLabel);
 
       if(existingLabel){
@@ -40,6 +44,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
         const newFolder = {
           label: this.newLabel
         };
+        this.foldersService.addFolder(newFolder);
         this.folders.push(newFolder);
         this.newLabel ='';
         this.existingLabelError = '';

@@ -61,7 +61,7 @@ export class DailyComponent implements OnInit, OnDestroy {
 
   addUser(){
 
-       const newUsername = this.addUsersForm.value.username;
+      const newUsername = this.addUsersForm.value.username;
       const newUser = new UsersModel(newUsername, [this.idProject]);
       console.log('UTILISATEUR EXISTANT', this.userService.isExistingUser(newUser));
       if(this.userService.isExistingUser(newUser)){
