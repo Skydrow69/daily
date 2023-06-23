@@ -19,7 +19,7 @@
       </form>
     </div>
     <div class="col-1" *ngFor="let folder of folders; let i = index">
-      <a [routerLink]="['/daily', i]">
+      <a [routerLink]="['/daily', folder.id]">
       <h5 class="card-title text-center">
         <i class="fas fa-folder fa-2x" style="color: #0b82f9"></i>
         <p> {{ folder.label }}</p>

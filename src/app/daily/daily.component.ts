@@ -16,9 +16,9 @@ export class DailyComponent implements OnInit, OnDestroy {
   minutes: number =0;
   timer: any;
   timerInterval: any;
-  username: string = '';
+  username!: UsersModel;
   usernameStart: string = '';
-  usersChosen : Array<string> = [];
+  usersChosen: Array<string> = [];
   users: Array<string> = ['user1', 'user2', 'user3'];
   index!: number ;
   startUserIndex: number = -1;
@@ -31,7 +31,11 @@ export class DailyComponent implements OnInit, OnDestroy {
     project: []
   };
   usersList!: UsersModel[];
-  idProject!: number;
+  idProject!: string;
+  projectId!: string;
+  newUser1!: string;
+  user!: UsersModel;
+
 
 
 
@@ -46,9 +50,19 @@ export class DailyComponent implements OnInit, OnDestroy {
   
     this.route.params.subscribe((params)=> {
       console.log('route param', params['id']);
-      this.idProject = +params['id'];
-      this.usersList = this.userService.getUsersProject(this.idProject);
-      this.folder = this.foldersService.getFolder(this.idProject);
+      this.idProject = params['id'];
+      //this.usersList = this.userService.getUsersProject(this.idProject);
+      //  this.folder = this.foldersService.getFolder(this.idProject);
+      this.userService.getUsersByProjectId(this.idProject).subscribe((users) => {
+        this.usersList = users.map((e: any) => {
+          return {
+            id: e.payload.doc.id,
+            ...e.payload.doc.data(),
+          };
+        });
+        this.usersList = this.usersList.filter((users) => users.project.includes(this.idProject)
+        );
+      });
     });
 
     this.addUsersForm = new FormGroup({
@@ -57,38 +71,76 @@ export class DailyComponent implements OnInit, OnDestroy {
 
   }
 
+  // addUserFirestore(){
+  //   this.newUser1 = this.addUsersForm.value.username;
+  //   const newUser = new UsersModel(this.newUser1);
+  //   this.userService.addUsersProjectFirestore(this.projectId, newUser);
+  //   console.log('add users firestore', this.userService.addUsersProjectFirestore(this.projectId, newUser));
 
+  // }
+  addUserFirestore() {
+    const newUser1 = this.addUsersForm.value.username;
+    const newUser = new UsersModel(newUser1, [this.idProject]);
+    // const userObject = newUser.toObject();
+    console.log('user', newUser);
 
-  addUser(){
-
-      const newUsername = this.addUsersForm.value.username;
-      const newUser = new UsersModel(newUsername, [this.idProject]);
-      console.log('UTILISATEUR EXISTANT', this.userService.isExistingUser(newUser));
-      if(this.userService.isExistingUser(newUser)){
-        console.log(this.addUsersForm.value.username)
-        this.usernameError = `${newUsername} existe déjà`;
-      }else{
-        this.usersList = this.userService.addUserProject(this.idProject, newUser);
-        console.log('USERS ADDED', this.userService.users);
+    
+    if(this.userService.isExistingUser(this.usersList, newUser1)) {
+         console.log(this.addUsersForm.value.username)
+         this.usernameError = `${newUser1} existe déjà`;
+       }else{
+        this.userService.addUsersProjectFirestore(this.idProject, newUser)
+        .then((result) => {
+          console.log('add users firestore', result);
+        })
+        .catch((error) => {
+          console.error('Error adding user to Firestore:', error);
+        });
         this.usernameError = '';
       }
       this.addUsersForm.reset();
-    //   for(let i = 0; i < this.users.length; i++){
-    //     if(this.users[i] === this.addUsersForm.value.username){
-    //       this.usernameError = 'Le nom existe déjà';
-    //       return;
-    //     }
-    // }
-    // this.users.push(this.addUsersForm.value.username);
-    // console.log('USERS ADDED', this.users);
-    // this.usernameError = '';
   }
+
+    deleteUser(user: UsersModel){
+      console.log('userlist', user);
+      if(user){
+        this.userService.deleteUser(user).then( result => {
+          console.log('utilisateur bien supprimé');
+        });
+      }
+    }
+
+
+  // addUser(){
+
+  //     const newUsername = this.addUsersForm.value.username;
+  //     const newUser = new UsersModel(newUsername, [this.idProject]);
+  //     console.log('UTILISATEUR EXISTANT', this.userService.isExistingUser(newUser));
+  //     if(this.userService.isExistingUser(newUser)){
+  //       console.log(this.addUsersForm.value.username)
+  //       this.usernameError = `${newUsername} existe déjà`;
+  //     }else{
+  //       this.usersList = this.userService.addUserProject(this.idProject, newUser);
+  //       console.log('USERS ADDED', this.userService.users);
+  //       this.usernameError = '';
+  //     }
+  //     this.addUsersForm.reset();
+  //   //   for(let i = 0; i < this.users.length; i++){
+  //   //     if(this.users[i] === this.addUsersForm.value.username){
+  //   //       this.usernameError = 'Le nom existe déjà';
+  //   //       return;
+  //   //     }
+  //   // }
+  //   // this.users.push(this.addUsersForm.value.username);
+  //   // console.log('USERS ADDED', this.users);
+  //   // this.usernameError = '';
+  // }
 
   startRandomizingUser(timeInterval: number) { 
     this.stateDaily = 'process';
-    this.randomizer(this.users);
+    this.randomizer(this.usersList);
     this.timer = setInterval(() => {
-      const remainingUsers = this.users.filter(user => !this.usersChosen.includes(user));
+      const remainingUsers = this.usersList.filter(user => !this.usersChosen.includes(user.name));
       console.log('REMAINING USERS: ', remainingUsers);
       if (remainingUsers.length > 0) {
        this.randomizer(remainingUsers);
@@ -98,14 +150,12 @@ export class DailyComponent implements OnInit, OnDestroy {
     }, timeInterval);
   }
 
-  randomizer(remainingUsers: Array<string>) {
+  randomizer(remainingUsers: UsersModel[]) {
 
     const randomIndex = Math.floor(Math.random() * remainingUsers.length);
-    console.log(remainingUsers);
-        this.username = remainingUsers[randomIndex];
-        this.usersChosen.push(this.username);
-        console.log('username: ', this.username);
-    
+    this.user = remainingUsers[randomIndex];
+    console.log('remainingUsers', remainingUsers);
+    this.usersChosen.push(this.user.name);
   }
   
   formatTimer(time: number): any {

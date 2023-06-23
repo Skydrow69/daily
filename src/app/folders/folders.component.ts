@@ -44,7 +44,14 @@ export class FoldersComponent implements OnInit, OnDestroy {
         const newFolder = {
           label: this.newLabel
         };
-        this.foldersService.addFolder(newFolder);
+        console.log('user', newFolder);
+        this.foldersService.addFolder(newFolder).then((result) => {
+          console.log('add folder firestore', result);
+        })
+        .catch((error) => {
+          console.error('Error adding user to Firestore:', error);
+        });
+
         this.folders.push(newFolder);
         this.newLabel ='';
         this.existingLabelError = '';

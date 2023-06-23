@@ -13,7 +13,7 @@
             </h1>
             <div class="d-flex align-items-center justify-content-center text-center">
                 <p *ngIf="stateDaily === 'init'">début du daily</p>
-                <p *ngIf="stateDaily === 'process' ">{{ username }} est le suivant</p>
+                <p *ngIf="stateDaily === 'process' ">{{ user.name }} est le suivant</p>
                 <p *ngIf="stateDaily === 'end' "> daily est fini</p>
             </div>
           
@@ -29,7 +29,7 @@
             
             <h3>Liste d'utilisateurs</h3>
             <div class="my-3">
-                <form [formGroup]="addUsersForm" (ngSubmit)="addUser()">
+                <form [formGroup]="addUsersForm" (ngSubmit)="addUserFirestore()">
                     <div class="mb-3">
                         <label for="username" class="form-label">Ajouter un nom d'utilisateur</label>
                         <input type="text" class="form-control" id="username" formControlName="username">
@@ -39,7 +39,7 @@
                 </form>
             </div>
             <ul class="list-group">
-                <li *ngFor="let user of usersList" class="list-group-item">{{user.name}}</li>
+                <li *ngFor="let user of usersList" class="list-group-item">{{user.name}}<i class="fa-solid fa-trash" (click)="deleteUser(user)"></i></li>
             </ul>
         </div>
 

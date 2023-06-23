@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UsersModel } from './models/users.model';
+import { AngularFirestore, DocumentReference } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +54,7 @@ export class UsersService {
   ];
 
 
-  constructor() { }
+  constructor(private firestore: AngularFirestore) { }
 
   getUsersProject(id: number){
    const userProject = this.users.filter(user => user.project.includes(id));
@@ -60,14 +62,42 @@ export class UsersService {
    return userProject;
   }
 
-  addUserProject(id: number, user: UsersModel) {
-    this.users.push(user);
-    // return this.getUsersProject(user.project[0]);
-    return this.getUsersProject(id);
+  // addUserProject(id: number, user: UsersModel) {
+  //   this.users.push(user);
+  //   // return this.getUsersProject(user.project[0]);
+  //   return this.getUsersProject(id);
+  // }
+
+  addUsersProjectFirestore(projectId: string, user: UsersModel){
+    // const userObject = {
+    //   name: user.name,
+    //   project: user.project
+    // };
+  
+    // return this.firestore
+    //   .collection('projects')
+    //   .doc(projectId)
+    //   .collection('users')
+    //   .add(userObject);
+
+
+    return this.firestore.collection('users').add(Object.assign({}, user));
   }
 
-  isExistingUser(userForm: UsersModel) {
-    const usersList = this.getUsersProject(userForm.project[0])
-    return usersList.some(user => user.name === userForm.name); 
+  getUsers(): Observable<any>{
+    return this.firestore.collection('users').snapshotChanges();
+  }
+
+  getUsersByProjectId(projectId: string): Observable<any>{
+    return this.firestore.collection('users').snapshotChanges();
+  }
+
+  deleteUser(user: UsersModel):Promise<any>{
+    return this.firestore.collection('users').doc(user.id).delete();
+  }
+  
+  
+  isExistingUser(usersList: UsersModel[], username: string) {
+    return usersList.some(user => user.name === username); 
   }
 }

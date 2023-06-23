@@ -1,0 +1,9 @@
+.list-group-item{
+    display: flex;
+    justify-content: space-between;
+    i{
+        margin-left: auto;
+        cursor: pointer;
+        padding: 5px;
+    }
+}
