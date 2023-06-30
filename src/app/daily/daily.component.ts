@@ -110,6 +110,10 @@ export class DailyComponent implements OnInit, OnDestroy {
       }
     }
 
+    isCurrentUserSpeaking(user: UsersModel) {
+      return this.stateDaily === 'process' && user && user.name === this.user.name;    
+    }
+
 
   // addUser(){
 

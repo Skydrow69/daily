@@ -8,5 +8,6 @@ export class Folders {
 
     constructor(label:string, id:string) {
         this.label = label;
+        this.id = id;
     }
 }

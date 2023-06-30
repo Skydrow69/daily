@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DailyComponent } from './daily/daily.component';
@@ -14,6 +14,15 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { DeleteFolderDialComponent } from './modals/delete-folder-dial/delete-folder-dial.component';
+import {MatDialogModule } from '@angular/material/dialog';
+import {MatIconModule} from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { HttpClientModule } from '@angular/common/http';
+
 
 
 
@@ -22,7 +31,8 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
     AppComponent,
     DailyComponent,
     FoldersComponent,
-    HomeComponent
+    HomeComponent,
+    DeleteFolderDialComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +43,15 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
     AngularFirestoreModule,
-    AngularFireStorageModule
+    AngularFireStorageModule,
+    ContextMenuModule,
+    MatDialogModule,
+    MatIconModule,
+    MatMenuModule,
+    ToastModule,
+    BrowserAnimationsModule,
+    ConfirmDialogModule,
+    HttpClientModule
 
   ],
   providers: [],

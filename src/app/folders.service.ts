@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Folders } from './models/folders.model';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 
 
@@ -28,9 +28,10 @@ export class FoldersService {
     return this.firestore.collection('projects').add(folder);
   }
 
-  getFoldersFirestore():Observable<any> {
+  getFoldersFirestore(): Observable<any[]> {
     return this.firestore.collection('projects').snapshotChanges();
   }
+  
 
   getFolders(){
     // return this.firestore.collection('projects').snapshotChanges();
@@ -40,5 +41,8 @@ export class FoldersService {
   getFolder(id: number) {
     return this.folders[id];
   }
+
+  deleteFolder(folder: Folders):Promise<any> {
+   return this.firestore.doc(`projects/${folder.id}`).delete();  }
 
 }

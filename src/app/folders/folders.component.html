@@ -18,7 +18,8 @@
         </div>
       </form>
     </div>
-    <div class="col-1" *ngFor="let folder of folders; let i = index">
+    <div #folders class="col-1" *ngFor="let folder of folders; let i = index" >
+      <p-contextMenu [target]="folders" [model]="getContextMenuItems(folder)"></p-contextMenu>
       <a [routerLink]="['/daily', folder.id]">
       <h5 class="card-title text-center">
         <i class="fas fa-folder fa-2x" style="color: #0b82f9"></i>
@@ -27,6 +28,6 @@
       </a>
     </div>
   </div>
-
 </div>
-  
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog> 

@@ -1,0 +1,10 @@
+<h1 mat-dialog-title class="text">Suppression utilisateur</h1>
+
+<mat-dialog-content>
+    <div>{{confirmMessage}}</div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="matDialogButton">
+    <button mat-raised-button (click)="dialogRef.close(false)">Cancel</button>
+    <button mat-raised-button (click)="dialogRef.close(true)" style="background-color:#960614 ; color:white;" >Confirmer</button>
+</mat-dialog-actions>
