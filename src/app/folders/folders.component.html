@@ -1,4 +1,5 @@
 <div class="container">
+  <p-messages [(value)]="messages"></p-messages>
   <div class="row mt-5" >
     <div class="col-2">
       <a (click)="show = !show">
@@ -13,12 +14,12 @@
           <input name ="newLabel" type="text" class="form-control" placeholder="Nommer votre projet" [(ngModel)]="newLabel">
           <p>{{ newLabel }}</p>
           <p *ngIf="existingLabelError">Le nom existe déjà</p>
-          <button class="btn btn-primary mt-2" type="submit">Créer</button>
-          <button class="btn btn-danger mt-2 ms-2" type="button">Annuler</button>
+          <button class="btn btn-primary mt-2" type="submit" [disabled]="!newLabel">Créer</button>
+          <button class="btn btn-danger mt-2 ms-2" type="button" (click)="show = false; newLabel = ''">Annuler</button>
         </div>
       </form>
     </div>
-    <div #folders class="col-1" *ngFor="let folder of folders; let i = index" >
+    <div #folders class="col-2" *ngFor="let folder of folders; let i = index" >
       <p-contextMenu [target]="folders" [model]="getContextMenuItems(folder)"></p-contextMenu>
       <a [routerLink]="['/daily', folder.id]">
       <h5 class="card-title text-center">
@@ -26,8 +27,14 @@
         <p> {{ folder.label }}</p>
       </h5>
       </a>
+      <div class="p-inputgroup" *ngIf="editFolderName(folder)">
+        <input name ="editLabel" type="text" pInputText placeholder="Keyword" [(ngModel)]="editLabel" />
+        <button type="button" pButton icon="pi pi-pencil" styleClass="p-button-warn" (click)="editFolderSubmit(folder)" [disabled]="!editLabel"></button>
+      </div>
+      <div><p *ngIf="existingLabelError">Le nom existe déjà</p></div>
     </div>
   </div>
 </div>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog> 
+

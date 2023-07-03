@@ -43,6 +43,12 @@ export class FoldersService {
   }
 
   deleteFolder(folder: Folders):Promise<any> {
-   return this.firestore.doc(`projects/${folder.id}`).delete();  }
+   return this.firestore.doc(`projects/${folder.id}`).delete();  
+  }
+
+  editFolder(folder: Folders):Promise<any>{
+    console.log('id', folder.id);
+    return this.firestore.collection('projects').doc(folder.id).update(folder);
+  }
 
 }

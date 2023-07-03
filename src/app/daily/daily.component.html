@@ -34,11 +34,11 @@
                         <input type="text" class="form-control" id="username" formControlName="username">
                          <div *ngIf="usernameError" class="form-text"><p>{{ usernameError }}</p></div> 
                     </div>
-                    <button type="submit" class="btn btn-primary">Add a user</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="!this.addUsersForm.value.username">Add a user</button>
                 </form>
             </div>
             <ul class="list-group">
-                <li *ngFor="let user of usersList" class="list-group-item" [ngStyle]="{'font-weight': isCurrentUserSpeaking(user) ? 'bold' : 'normal'}" [class.active]="isCurrentUserSpeaking(user)">{{user.name}}<i class="fa-solid fa-trash" (click)="deleteUser(user)"></i></li>
+                <li *ngFor="let user of usersList" class="list-group-item" [ngStyle]="{'font-weight': isCurrentUserSpeaking(user) ? 'bold' : 'normal'}" [class.active]="isCurrentUserSpeaking(user)">{{user.name}}<i class="fa-solid fa-trash" *ngIf="this.stateDaily !== 'process'" (click)="deleteUser(user)"></i></li>
             </ul>
         </div>
 

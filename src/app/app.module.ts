@@ -22,6 +22,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { HttpClientModule } from '@angular/common/http';
+import { InputTextModule } from 'primeng/inputtext';
+import { MessagesModule } from 'primeng/messages';
 
 
 
@@ -51,7 +53,9 @@ import { HttpClientModule } from '@angular/common/http';
     ToastModule,
     BrowserAnimationsModule,
     ConfirmDialogModule,
-    HttpClientModule
+    HttpClientModule,
+    InputTextModule,
+    MessagesModule
 
   ],
   providers: [],

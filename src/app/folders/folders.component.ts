@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Folders } from '../models/folders.model';
 import { FoldersService } from '../folders.service';
-import { MenuItem, MessageService, ConfirmationService, ConfirmEventType } from "primeng/api";
+import { MenuItem, MessageService, ConfirmationService, ConfirmEventType, Message } from "primeng/api";
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -19,7 +19,11 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   existingLabelError: string = ''; 
 
+  messages: Message[] = [];
+
   newLabel: string = '' ;
+
+  editLabel: string = '';
 
   items!: MenuItem[];
 
@@ -30,6 +34,8 @@ export class FoldersComponent implements OnInit, OnDestroy {
   routeSub?: Subscription;
   routeId?: string;
   id?: string;
+  editMode: boolean = false;
+  idFolderSelected?: string;
 
   constructor(private foldersService : FoldersService, private activatedRoute: ActivatedRoute,
               private messageService: MessageService,
@@ -73,6 +79,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
         };
         console.log('user', newFolder);
         this.foldersService.addFolder(newFolder).then((result) => {
+          this.editMode = true;
           console.log('add folder firestore', result);
         })
         .catch((error) => {
@@ -91,6 +98,43 @@ export class FoldersComponent implements OnInit, OnDestroy {
       this.confirm2(folder);
       console.log('Folder ID to delete:', folder);
     }
+
+    editFolder(folder: Folders) {
+        this.idFolderSelected = folder.id;
+    }
+
+    editFolderSubmit(folder: Folders) {
+      // this.foldersService.editFolder(folder).then(() => {
+      // })
+      const existingLabel = this.folders.some(folder => folder.label === this.editLabel);
+
+      if(existingLabel){
+        this.messages = [{ severity: 'error', summary: 'Error', detail: 'Le nom existe déjà' }];
+      }else{
+        const editFolder = {
+          label: this.editLabel,
+          id: folder.id
+        };
+        console.log('folder edited', editFolder);
+         this.foldersService.editFolder(editFolder).then((result) => {
+           
+           console.log('edit folder firestore', result);
+         })
+         .catch((error) => {
+           console.error('Error adding user to Firestore:', error);
+        });
+        this.idFolderSelected = '';
+        this.editLabel ='';
+        this.existingLabelError = '';
+      }
+    }
+
+    editFolderName(folder: Folders) {
+      if(this.idFolderSelected === folder.id) {
+        return true;
+      }
+      return false;
+    }
     
     getContextMenuItems(folder: Folders): MenuItem[] {
       return [
@@ -101,7 +145,8 @@ export class FoldersComponent implements OnInit, OnDestroy {
         },
         {
           label:'Edit',
-          icon: 'pi pi-fw pi-edit',
+          icon: 'pi pi-fw pi-pencil',
+          command: () => this.editFolder(folder)
         }
       ];
     }
