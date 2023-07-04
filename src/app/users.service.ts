@@ -95,6 +95,11 @@ export class UsersService {
   deleteUser(user: UsersModel):Promise<any>{
     return this.firestore.collection('users').doc(user.id).delete();
   }
+
+  editUser(user: UsersModel):Promise<any>{
+    return this.firestore.collection('users').doc(user.id).update(user);
+  }
+  
   
   
   isExistingUser(usersList: UsersModel[], username: string) {

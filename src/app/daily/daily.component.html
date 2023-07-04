@@ -38,7 +38,18 @@
                 </form>
             </div>
             <ul class="list-group">
-                <li *ngFor="let user of usersList" class="list-group-item" [ngStyle]="{'font-weight': isCurrentUserSpeaking(user) ? 'bold' : 'normal'}" [class.active]="isCurrentUserSpeaking(user)">{{user.name}}<i class="fa-solid fa-trash" *ngIf="this.stateDaily !== 'process'" (click)="deleteUser(user)"></i></li>
+                <li *ngFor="let user of usersList" class="list-group-item" [ngStyle]="{'font-weight': isCurrentUserSpeaking(user) ? 'bold' : 'normal'}" [class.active]="isCurrentUserSpeaking(user)">
+                    <span *ngIf="!isEditUsername(user)">{{user.name}}</span>
+                    <div class="p-inputgroup" *ngIf="isEditUsername(user)" >
+                        <input name ="editLabel" type="text" pInputText placeholder="Keyword" [(ngModel)]="editUsername" />
+                        <button type="button" pButton icon="pi pi-check" styleClass="p-button-warn" [disabled]="!editUsername" (click)="editUser(user)"></button>
+                        <button type="button" pButton icon="pi pi-times" styleClass="p-button-danger" (click)="idUserSelected = ''"></button>
+                    </div>
+                    <div *ngIf="this.stateDaily !== 'process' && !isEditUsername(user)">
+                        <i class="fa-solid fa-pencil" (click)="idUserSelected = user.id"></i>    
+                        <i class="fa-solid fa-trash"  (click)="deleteUser(user)"></i>
+                    </div>
+                </li>
             </ul>
         </div>
 

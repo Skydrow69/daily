@@ -35,6 +35,8 @@ export class DailyComponent implements OnInit, OnDestroy {
   projectId!: string;
   newUser1!: string;
   user!: UsersModel;
+  idUserSelected?: string;
+  editUsername?: string;
 
 
 
@@ -109,6 +111,32 @@ export class DailyComponent implements OnInit, OnDestroy {
         });
       }
     }
+
+    editUser(user :UsersModel){
+      const editName = {
+        name: this.editUsername || '',
+        id: user.id,
+        project: user.project
+      }
+
+      this.userService.editUser(editName).then(result => {
+        console.log('nom modifié', user);
+      }).catch((error) => {
+        console.error('Error editing user to Firestore:', error);
+     });
+
+     this.idUserSelected = '';
+     this.editUsername = '';
+
+    }
+
+    isEditUsername(user: UsersModel) {
+      if(this.idUserSelected === user.id) {
+        return true;
+      }
+      return false;
+    }
+    
 
     isCurrentUserSpeaking(user: UsersModel) {
       return this.stateDaily === 'process' && user && user.name === this.user.name;    
