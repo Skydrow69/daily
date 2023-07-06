@@ -24,6 +24,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { HttpClientModule } from '@angular/common/http';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessagesModule } from 'primeng/messages';
+import { AvatarModule } from 'primeng/avatar';
 
 
 
@@ -55,7 +56,8 @@ import { MessagesModule } from 'primeng/messages';
     ConfirmDialogModule,
     HttpClientModule,
     InputTextModule,
-    MessagesModule
+    MessagesModule,
+    AvatarModule
 
   ],
   providers: [],

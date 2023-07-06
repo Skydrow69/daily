@@ -5,11 +5,13 @@ import { FoldersService } from '../folders.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { UsersService } from '../users.service';
 import { UsersModel } from '../models/users.model';
+import { MessageService, ConfirmationService, ConfirmEventType } from "primeng/api";
 
 @Component({
   selector: 'app-daily',
   templateUrl: './daily.component.html',
-  styleUrls: ['./daily.component.scss']
+  styleUrls: ['./daily.component.scss'],
+  providers: [MessageService, ConfirmationService]
 })
 export class DailyComponent implements OnInit, OnDestroy {
   seconds: number =0;
@@ -45,16 +47,15 @@ export class DailyComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
               private foldersService: FoldersService,
+              private messageService: MessageService,
+              private confirmationService: ConfirmationService,
               private userService : UsersService){
               }
   
   ngOnInit() {
-  
     this.route.params.subscribe((params)=> {
       console.log('route param', params['id']);
       this.idProject = params['id'];
-      //this.usersList = this.userService.getUsersProject(this.idProject);
-      //  this.folder = this.foldersService.getFolder(this.idProject);
       this.userService.getUsersByProjectId(this.idProject).subscribe((users) => {
         this.usersList = users.map((e: any) => {
           return {
@@ -62,8 +63,8 @@ export class DailyComponent implements OnInit, OnDestroy {
             ...e.payload.doc.data(),
           };
         });
-        this.usersList = this.usersList.filter((users) => users.project.includes(this.idProject)
-        );
+        this.usersList = this.usersList.filter((users) => users.project.includes(this.idProject));
+        this.randomizer(this.usersList);
       });
     });
 
@@ -73,17 +74,9 @@ export class DailyComponent implements OnInit, OnDestroy {
 
   }
 
-  // addUserFirestore(){
-  //   this.newUser1 = this.addUsersForm.value.username;
-  //   const newUser = new UsersModel(this.newUser1);
-  //   this.userService.addUsersProjectFirestore(this.projectId, newUser);
-  //   console.log('add users firestore', this.userService.addUsersProjectFirestore(this.projectId, newUser));
-
-  // }
   addUserFirestore() {
     const newUser1 = this.addUsersForm.value.username;
     const newUser = new UsersModel(newUser1, [this.idProject]);
-    // const userObject = newUser.toObject();
     console.log('user', newUser);
 
     
@@ -105,11 +98,7 @@ export class DailyComponent implements OnInit, OnDestroy {
 
     deleteUser(user: UsersModel){
       console.log('userlist', user);
-      if(user){
-        this.userService.deleteUser(user).then( result => {
-          console.log('utilisateur bien supprimé');
-        });
-      }
+      this.confirm2(user);
     }
 
     editUser(user :UsersModel){
@@ -143,37 +132,12 @@ export class DailyComponent implements OnInit, OnDestroy {
     }
 
 
-  // addUser(){
-
-  //     const newUsername = this.addUsersForm.value.username;
-  //     const newUser = new UsersModel(newUsername, [this.idProject]);
-  //     console.log('UTILISATEUR EXISTANT', this.userService.isExistingUser(newUser));
-  //     if(this.userService.isExistingUser(newUser)){
-  //       console.log(this.addUsersForm.value.username)
-  //       this.usernameError = `${newUsername} existe déjà`;
-  //     }else{
-  //       this.usersList = this.userService.addUserProject(this.idProject, newUser);
-  //       console.log('USERS ADDED', this.userService.users);
-  //       this.usernameError = '';
-  //     }
-  //     this.addUsersForm.reset();
-  //   //   for(let i = 0; i < this.users.length; i++){
-  //   //     if(this.users[i] === this.addUsersForm.value.username){
-  //   //       this.usernameError = 'Le nom existe déjà';
-  //   //       return;
-  //   //     }
-  //   // }
-  //   // this.users.push(this.addUsersForm.value.username);
-  //   // console.log('USERS ADDED', this.users);
-  //   // this.usernameError = '';
-  // }
-
   startRandomizingUser(timeInterval: number) { 
     this.stateDaily = 'process';
-    this.randomizer(this.usersList);
-    this.timer = setInterval(() => {
+    this.timerInterval = setInterval(() => {
+      console.log('next');
       const remainingUsers = this.usersList.filter(user => !this.usersChosen.includes(user.name));
-      console.log('REMAINING USERS: ', remainingUsers);
+      // console.log('REMAINING USERS: ', remainingUsers);
       if (remainingUsers.length > 0) {
        this.randomizer(remainingUsers);
       } else {
@@ -186,8 +150,19 @@ export class DailyComponent implements OnInit, OnDestroy {
 
     const randomIndex = Math.floor(Math.random() * remainingUsers.length);
     this.user = remainingUsers[randomIndex];
-    console.log('remainingUsers', remainingUsers);
+    // console.log('remainingUsers', remainingUsers);
     this.usersChosen.push(this.user.name);
+  }
+
+  nextUser() {
+    clearInterval(this.timerInterval);
+    const remainingUsers = this.usersList.filter(user => !this.usersChosen.includes(user.name));
+    if (remainingUsers.length > 0) {
+      this.randomizer(remainingUsers);
+      this.startRandomizingUser(5000);
+     } else {
+       this.stopTimer();
+     }  
   }
   
   formatTimer(time: number): any {
@@ -197,14 +172,13 @@ export class DailyComponent implements OnInit, OnDestroy {
     return time;
   }
 
-  startTimer() {
-    
+  startTimer() { 
+    console.log('userchosen start', this.usersChosen);
+    console.log('usersList start', this.usersList);
     if(this.stateDaily === 'init'){
       this.seconds = 1;
     }
     this.startRandomizingUser(5000);
-    // this.draw();
-    // this.setIntervalDraw();
     this.timer = setInterval(() => {
       this.seconds++;
   
@@ -219,12 +193,48 @@ export class DailyComponent implements OnInit, OnDestroy {
     clearInterval(this.timer);
     clearInterval(this.timerInterval);
     this.stateDaily = 'end';
+    console.log(this.usersChosen);
+    console.log(this.usersList);
   }
   
   resetTimer(){
+    // this.ngOnInit();
+    this.randomizer(this.usersList);
+    console.log('userchosen reset', this.usersChosen);
+    console.log('usersList reset', this.usersList);
     this.minutes =0;
     this.seconds =0;
+    this.stopTimer();
+    this.stateDaily = 'init';
+    this.usersChosen = [];
   }
+
+  confirm2(user: UsersModel) {
+    this.confirmationService.confirm({
+        message: 'Do you want to delete this record?',
+        header: 'Delete Confirmation',
+        icon: 'pi pi-info-circle',
+        accept: () => {
+          this.userService.deleteUser(user).then( result => {
+            this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted' });
+          });        
+        },
+          reject: (type: any) => {
+            switch (type) {
+              case ConfirmEventType.REJECT:
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+                break;
+              case ConfirmEventType.CANCEL:
+                this.messageService.add({ severity: 'warn', summary: 'Cancelled', detail: 'You have cancelled' });
+                break;
+              default:
+                this.messageService.add({ severity: 'warn', summary: 'Cancelled', detail: 'You have cancelled' });
+                break;
+            }
+          }
+          
+    });
+}
 
   ngOnDestroy() {
     //Called once, before the instance is destroyed.
