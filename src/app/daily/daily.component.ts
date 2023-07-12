@@ -39,6 +39,14 @@ export class DailyComponent implements OnInit, OnDestroy {
   user!: UsersModel;
   idUserSelected?: string;
   editUsername?: string;
+  isPausing: boolean = false;
+  speakingTime: number = 5000;
+  category = [
+    { name: 'product-owner', code: 'PO'},
+    { name: 'developer', code: 'DEV'}
+  ];
+
+  
 
 
 
@@ -64,12 +72,16 @@ export class DailyComponent implements OnInit, OnDestroy {
           };
         });
         this.usersList = this.usersList.filter((users) => users.project.includes(this.idProject));
-        this.randomizer(this.usersList);
+        if(this.usersList.length > 0){
+          console.log(this.usersList);
+          this.randomizer(this.usersList);
+        }
       });
     });
 
     this.addUsersForm = new FormGroup({
       username: new FormControl(),
+      category: new FormControl()
     });
 
   }
@@ -77,6 +89,7 @@ export class DailyComponent implements OnInit, OnDestroy {
   addUserFirestore() {
     const newUser1 = this.addUsersForm.value.username;
     const newUser = new UsersModel(newUser1, [this.idProject]);
+    newUser.category = this.addUsersForm.value.category;
     console.log('user', newUser);
 
     
@@ -136,7 +149,11 @@ export class DailyComponent implements OnInit, OnDestroy {
     this.stateDaily = 'process';
     this.timerInterval = setInterval(() => {
       console.log('next');
-      const remainingUsers = this.usersList.filter(user => !this.usersChosen.includes(user.name));
+      const remainingUsers = this.usersList.filter(user => { 
+        console.log('randomising usersChosen', this.usersChosen);
+        console.log('randomising user', user.name);
+        return !this.usersChosen.includes(user.name);
+      });
       // console.log('REMAINING USERS: ', remainingUsers);
       if (remainingUsers.length > 0) {
        this.randomizer(remainingUsers);
@@ -144,6 +161,19 @@ export class DailyComponent implements OnInit, OnDestroy {
         this.stopTimer();
       }   
     }, timeInterval);
+  }
+
+  getColorByCategory(label: string | undefined){
+    switch (label) {
+      case 'product-owner':
+        return {'background-color': '#9c27b0', color: 'white!important' };
+        break;
+      case 'developer':
+        return {'background-color': 'red', color: 'white!important' }
+        break;
+      default:
+       return {};
+    }
   }
 
   randomizer(remainingUsers: UsersModel[]) {
@@ -159,7 +189,7 @@ export class DailyComponent implements OnInit, OnDestroy {
     const remainingUsers = this.usersList.filter(user => !this.usersChosen.includes(user.name));
     if (remainingUsers.length > 0) {
       this.randomizer(remainingUsers);
-      this.startRandomizingUser(5000);
+      this.startRandomizingUser(this.speakingTime);
      } else {
        this.stopTimer();
      }  
@@ -173,41 +203,63 @@ export class DailyComponent implements OnInit, OnDestroy {
   }
 
   startTimer() { 
-    console.log('userchosen start', this.usersChosen);
-    console.log('usersList start', this.usersList);
-    if(this.stateDaily === 'init'){
+    if (this.stateDaily === 'init') {
       this.seconds = 1;
     }
-    this.startRandomizingUser(5000);
+    
+    this.startRandomizingUser(this.speakingTime);
     this.timer = setInterval(() => {
-      this.seconds++;
+      if (!this.isPausing) {
+        this.seconds++;
   
-      if (this.seconds === 60) {
-        this.minutes++;
-        this.seconds = 0;
+        if (this.seconds === 60) {
+          this.minutes++;
+          this.seconds = 0;
+        }
       }
     }, 1000);
   }
-
-  stopTimer(){
+  
+  stopTimer() {
     clearInterval(this.timer);
     clearInterval(this.timerInterval);
     this.stateDaily = 'end';
+    // console.log(this.usersChosen);
+    // console.log(this.usersList);
+  }
+  resumeTimer() {
+    this.isPausing = false;
+    this.startRandomizingUser(this.speakingTime);
     console.log(this.usersChosen);
     console.log(this.usersList);
+
   }
   
-  resetTimer(){
-    // this.ngOnInit();
+  pauseTimer() {
+    this.isPausing = true;
+    clearInterval(this.timerInterval);
+    this.speakingTime = this.seconds > 5 ? ((this.seconds*1000) % this.speakingTime) : this.speakingTime - this.seconds*1000;
+    // Arrêter le tirage au sort si nécessaire
+    // ...
+    console.log('pause chosen', this.usersChosen);
+    console.log('pause list', this.usersList);
+    console.log('speakingtime', this.speakingTime);
+
+  }
+  
+  
+  
+  resetTimer() {
     this.randomizer(this.usersList);
     console.log('userchosen reset', this.usersChosen);
     console.log('usersList reset', this.usersList);
-    this.minutes =0;
-    this.seconds =0;
+    this.minutes = 0;
+    this.seconds = 0;
     this.stopTimer();
     this.stateDaily = 'init';
     this.usersChosen = [];
   }
+  
 
   confirm2(user: UsersModel) {
     this.confirmationService.confirm({

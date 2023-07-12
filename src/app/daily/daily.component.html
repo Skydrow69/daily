@@ -19,8 +19,9 @@
           
             <div class="d-flex align-items-center justify-content-center text-center" style="height: 500px;">
                 <button (click)="startTimer()" class="btn btn-success" style="margin-right:30px">Start</button>
-                <button (click)="nextUser()"class="btn btn-success" style="margin-right:30px" [disabled]="stateDaily ==='end'">Next</button>
-                <button class="btn btn-primary" style="margin-right:30px">Pause</button>
+                <button (click)="nextUser()" class="btn btn-success" style="margin-right:30px" [disabled]="stateDaily ==='end'">Next</button>
+                <button (click)="pauseTimer()" class="btn btn-primary" style="margin-right:30px">Pause</button>
+                <button (click)="resumeTimer()" class="btn btn-primary" style="margin-right:30px">Reprendre</button>
                 <button (click)="resetTimer()"class="btn btn-danger" style="margin-right:30px">Reset</button>
                 <p> {{formatTimer(minutes)}} : {{formatTimer(seconds)}}</p>  
             </div>
@@ -35,13 +36,16 @@
                         <input type="text" class="form-control" id="username" formControlName="username">
                          <div *ngIf="usernameError" class="form-text"><p>{{ usernameError }}</p></div> 
                     </div>
+                    <div>
+                        <p-dropdown placeholder="Select a category" [options]="category" formControlName="category" optionValue="name" [showClear]="true" optionLabel="name"></p-dropdown>
+                    </div>
                     <button type="submit" class="btn btn-primary" [disabled]="!this.addUsersForm.value.username">Add a user</button>
                 </form>
             </div>
             <ul class="list-group">
                 <li *ngFor="let user of usersList" class="list-group-item" [ngStyle]="{'font-weight': isCurrentUserSpeaking(user) ? 'bold' : 'normal'}" [class.active]="isCurrentUserSpeaking(user)">
                     <div *ngIf="!isEditUsername(user)" class="username">
-                        <p-avatar [label]="user.name[0].toUpperCase()" styleClass="me-2 text-dark" shape="circle"></p-avatar>
+                        <p-avatar [label]="user.name[0].toUpperCase()" styleClass="me-2 text-dark" shape="circle" [style]="getColorByCategory(user?.category)"></p-avatar>
                         <span>{{user.name}}</span>
                     </div>
                     <div class="p-inputgroup" *ngIf="isEditUsername(user)" >

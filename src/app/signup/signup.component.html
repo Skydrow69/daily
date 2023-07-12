@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="row">
+        <div class="col-8 d-flex justify-content-center mt-5">
+            <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+                <h3 class="mb-4"> Création de compte </h3>  
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="p-float-label">
+                        <input pInputText id="email" formControlName="email"/>
+                        <label htmlFor="email">Email</label>
+                    </span>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="p-float-label">
+                        <input pInputText id="username" formControlName="username"/>
+                        <label htmlFor="username">Username</label>
+                    </span>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="p-float-label">
+                   <p-password [toggleMask]="true" formControlName="password"></p-password>
+                    </span>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="p-float-label">
+                        <p-password [toggleMask]="true" formControlName="confirmPassword"></p-password>
+                    </span>
+                </div>
+                <div class="form-group">
+                    <p-button label="S'inscrire" styleClass="p-button-rounded" [disabled]="signUpForm.invalid" type="submit"></p-button>
+                    <p-button label="Déjà un compte ?" styleClass="p-button-rounded p-button-help"></p-button>                  
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

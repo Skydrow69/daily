@@ -25,6 +25,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessagesModule } from 'primeng/messages';
 import { AvatarModule } from 'primeng/avatar';
+import { DropdownModule } from 'primeng/dropdown';
+import { SignupComponent } from './signup/signup.component';
+import { PasswordModule } from 'primeng/password';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
 
 
 
@@ -35,7 +39,9 @@ import { AvatarModule } from 'primeng/avatar';
     DailyComponent,
     FoldersComponent,
     HomeComponent,
-    DeleteFolderDialComponent
+    DeleteFolderDialComponent,
+    SignupComponent,
+    VerifyEmailComponent
   ],
   imports: [
     BrowserModule,
@@ -57,8 +63,9 @@ import { AvatarModule } from 'primeng/avatar';
     HttpClientModule,
     InputTextModule,
     MessagesModule,
-    AvatarModule
-
+    AvatarModule,
+    DropdownModule,
+    PasswordModule
   ],
   providers: [],
   bootstrap: [AppComponent]
