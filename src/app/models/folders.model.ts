@@ -3,6 +3,7 @@
 export class Folders {
     public label:string;
     public id?: string;
+    public adminId?: string;
 
 
 

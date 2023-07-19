@@ -29,6 +29,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SignupComponent } from './signup/signup.component';
 import { PasswordModule } from 'primeng/password';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { LoginComponent } from './login/login.component';
 
 
 
@@ -41,7 +42,8 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
     HomeComponent,
     DeleteFolderDialComponent,
     SignupComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

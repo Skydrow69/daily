@@ -25,7 +25,8 @@ export class SignupComponent {
 
   onSubmit() {
     this.submitted = true;
-    this.authService.signUp(this.signUpForm.value.email, this.signUpForm.value.password);
+    this.authService.signUp(this.signUpForm.value);
+
     // stop here if form is invalid
     if (this.signUpForm.invalid) {
         return;

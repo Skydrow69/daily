@@ -88,9 +88,18 @@ export class UsersService {
     return this.firestore.collection('users').snapshotChanges();
   }
 
+  getUserById(id: string): Observable<any>{
+    return this.firestore.collection('users').doc(id).snapshotChanges();
+  }
+
+  setUserById(id: string, data: any): Promise<any>{
+     return this.firestore.collection('users').doc(id).update(data);
+  }
+
   getUsersByProjectId(projectId: string): Observable<any>{
     return this.firestore.collection('users').snapshotChanges();
   }
+
 
   deleteUser(user: UsersModel):Promise<any>{
     return this.firestore.collection('users').doc(user.id).delete();
@@ -99,8 +108,6 @@ export class UsersService {
   editUser(user: UsersModel):Promise<any>{
     return this.firestore.collection('users').doc(user.id).update(user);
   }
-  
-  
   
   isExistingUser(usersList: UsersModel[], username: string) {
     return usersList.some(user => user.name === username); 

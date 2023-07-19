@@ -1,8 +1,10 @@
 export class UsersModel {
     public name!: string;
-    public project!: string[];
+    public project?: string[];
     public id?: string;
     public category?: string;
+    public emailVerified?: boolean;
+
   
     constructor(name: string, project: string[]) {
       this.name = name;

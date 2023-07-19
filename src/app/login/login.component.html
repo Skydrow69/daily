@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="row">
+        <div class="col-8 d-flex justify-content-center mt-5">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <h3 class="mb-4"> Connexion </h3>  
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="p-float-label">
+                        <input pInputText id="email" formControlName="email"/>
+                        <label htmlFor="email">Email</label>
+                    </span>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="p-float-label">
+                   <p-password [toggleMask]="true" formControlName="password"></p-password>
+                    </span>
+                </div>
+                <div class="form-group">
+                    <p-button label="Connexion" styleClass="p-button-rounded" [disabled]="loginForm.invalid" type="submit"></p-button>
+                    <p-button label="Pas encore inscrit ?" styleClass="p-button-rounded p-button-help" [routerLink]="['/sign-up']"></p-button>                  
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -6,6 +6,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { UsersService } from '../users.service';
 import { UsersModel } from '../models/users.model';
 import { MessageService, ConfirmationService, ConfirmEventType } from "primeng/api";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-daily',
@@ -61,8 +62,8 @@ export class DailyComponent implements OnInit, OnDestroy {
               }
   
   ngOnInit() {
-    this.route.params.subscribe((params)=> {
-      console.log('route param', params['id']);
+      this.route.params.subscribe((params)=> {
+      console.log('route param', params['id']);  
       this.idProject = params['id'];
       this.userService.getUsersByProjectId(this.idProject).subscribe((users) => {
         this.usersList = users.map((e: any) => {
@@ -71,7 +72,7 @@ export class DailyComponent implements OnInit, OnDestroy {
             ...e.payload.doc.data(),
           };
         });
-        this.usersList = this.usersList.filter((users) => users.project.includes(this.idProject));
+        this.usersList = this.usersList.filter((users) => users.project?.includes(this.idProject));
         if(this.usersList.length > 0){
           console.log(this.usersList);
           this.randomizer(this.usersList);
